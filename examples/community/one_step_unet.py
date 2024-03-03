@@ -22,3 +22,17 @@ class UnetSchedulerOneForwardPipeline(DiffusionPipeline):
         result = scheduler_output - scheduler_output + torch.ones_like(scheduler_output)
 
         return result
+
+
+if __name__ == "__main__":
+    from diffusers import DDPMScheduler, UNet2DModel
+
+    scheduler = DDPMScheduler()
+    unet = UNet2DModel(sample_size=32)
+
+    pipeline = UnetSchedulerOneForwardPipeline(unet=unet, scheduler=scheduler)
+
+    output = pipeline()
+    
+    print(output)
+    print(output.shape)
