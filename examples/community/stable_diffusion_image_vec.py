@@ -1,3 +1,5 @@
+''' Original file copied from src\diffusers\pipelines\stable_diffusion\pipeline_stable_diffusion.py '''
+
 # Copyright 2024 The HuggingFace Team. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
