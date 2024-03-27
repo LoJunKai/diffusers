@@ -46,7 +46,7 @@ logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
 @dataclass
 class ControlNetOutput(BaseOutput):
     """
-    The output of [`ControlNetModel`].
+    The output of [`ControlNetCLIPModel`].
 
     Args:
         down_block_res_samples (`tuple[torch.Tensor]`):
@@ -108,7 +108,7 @@ class ControlNetConditioningEmbedding(nn.Module):
         return embedding
 
 
-class ControlNetModel(ModelMixin, ConfigMixin, FromOriginalControlNetMixin):
+class ControlNetCLIPModel(ModelMixin, ConfigMixin, FromOriginalControlNetMixin):
     """
     A ControlNet model.
 
@@ -451,11 +451,11 @@ class ControlNetModel(ModelMixin, ConfigMixin, FromOriginalControlNetMixin):
         conditioning_channels: int = 3,
     ):
         r"""
-        Instantiate a [`ControlNetModel`] from [`UNet2DConditionModel`].
+        Instantiate a [`ControlNetCLIPModel`] from [`UNet2DConditionModel`].
 
         Parameters:
             unet (`UNet2DConditionModel`):
-                The UNet model weights to copy to the [`ControlNetModel`]. All configuration options are also copied
+                The UNet model weights to copy to the [`ControlNetCLIPModel`]. All configuration options are also copied
                 where applicable.
         """
         transformer_layers_per_block = (
@@ -676,7 +676,7 @@ class ControlNetModel(ModelMixin, ConfigMixin, FromOriginalControlNetMixin):
         return_dict: bool = True,
     ) -> Union[ControlNetOutput, Tuple[Tuple[torch.FloatTensor, ...], torch.FloatTensor]]:
         """
-        The [`ControlNetModel`] forward method.
+        The [`ControlNetCLIPModel`] forward method.
 
         Args:
             sample (`torch.FloatTensor`):

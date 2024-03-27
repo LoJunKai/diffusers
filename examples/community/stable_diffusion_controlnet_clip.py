@@ -24,12 +24,12 @@ import torch
 import torch.nn.functional as F
 from transformers import CLIPImageProcessor, CLIPTextModel, CLIPTokenizer, CLIPVisionModelWithProjection
 
-from ...image_processor import PipelineImageInput, VaeImageProcessor
-from ...loaders import FromSingleFileMixin, IPAdapterMixin, LoraLoaderMixin, TextualInversionLoaderMixin
-from ...models import AutoencoderKL, ControlNetModel, ImageProjection, UNet2DConditionModel
-from ...models.lora import adjust_lora_scale_text_encoder
-from ...schedulers import KarrasDiffusionSchedulers
-from ...utils import (
+from diffusers.image_processor import PipelineImageInput, VaeImageProcessor
+from diffusers.loaders import FromSingleFileMixin, IPAdapterMixin, LoraLoaderMixin, TextualInversionLoaderMixin
+from diffusers.models import AutoencoderKL, ControlNetModel, ControlNetCLIPModel, ImageProjection, UNet2DConditionModel
+from diffusers.models.lora import adjust_lora_scale_text_encoder
+from diffusers.schedulers import KarrasDiffusionSchedulers
+from diffusers.utils import (
     USE_PEFT_BACKEND,
     deprecate,
     logging,
@@ -37,11 +37,11 @@ from ...utils import (
     scale_lora_layers,
     unscale_lora_layers,
 )
-from ...utils.torch_utils import is_compiled_module, is_torch_version, randn_tensor
-from ..pipeline_utils import DiffusionPipeline, StableDiffusionMixin
-from ..stable_diffusion.pipeline_output import StableDiffusionPipelineOutput
-from ..stable_diffusion.safety_checker import StableDiffusionSafetyChecker
-from .multicontrolnet import MultiControlNetModel
+from diffusers.utils.torch_utils import is_compiled_module, is_torch_version, randn_tensor
+from diffusers.pipelines.pipeline_utils import DiffusionPipeline, StableDiffusionMixin
+from diffusers.pipelines.stable_diffusion.pipeline_output import StableDiffusionPipelineOutput
+from diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
+from diffusers.pipelines.controlnet.multicontrolnet import MultiControlNetModel
 
 
 logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
@@ -51,7 +51,7 @@ EXAMPLE_DOC_STRING = """
     Examples:
         ```py
         >>> # !pip install opencv-python transformers accelerate
-        >>> from diffusers import StableDiffusionControlNetPipeline, ControlNetModel, UniPCMultistepScheduler
+        >>> from diffusers import StableDiffusionControlNetCLIPPipeline, ControlNetModel, UniPCMultistepScheduler
         >>> from diffusers.utils import load_image
         >>> import numpy as np
         >>> import torch
@@ -73,7 +73,7 @@ EXAMPLE_DOC_STRING = """
 
         >>> # load control net and stable diffusion v1-5
         >>> controlnet = ControlNetModel.from_pretrained("lllyasviel/sd-controlnet-canny", torch_dtype=torch.float16)
-        >>> pipe = StableDiffusionControlNetPipeline.from_pretrained(
+        >>> pipe = StableDiffusionControlNetCLIPPipeline.from_pretrained(
         ...     "runwayml/stable-diffusion-v1-5", controlnet=controlnet, torch_dtype=torch.float16
         ... )
 
@@ -138,7 +138,7 @@ def retrieve_timesteps(
     return timesteps, num_inference_steps
 
 
-class StableDiffusionControlNetPipeline(
+class StableDiffusionControlNetCLIPPipeline(
     DiffusionPipeline,
     StableDiffusionMixin,
     TextualInversionLoaderMixin,
@@ -629,9 +629,15 @@ class StableDiffusionControlNetPipeline(
             self.controlnet, torch._dynamo.eval_frame.OptimizedModule
         )
         if (
-            isinstance(self.controlnet, ControlNetModel)
-            or is_compiled
-            and isinstance(self.controlnet._orig_mod, ControlNetModel)
+            (
+                isinstance(self.controlnet, ControlNetModel)
+                or is_compiled
+                and isinstance(self.controlnet._orig_mod, ControlNetModel)
+            ) or (
+                isinstance(self.controlnet, ControlNetCLIPModel)
+                or is_compiled
+                and isinstance(self.controlnet._orig_mod, ControlNetCLIPModel)
+            )
         ):
             self.check_image(image, prompt, prompt_embeds)
         elif (
@@ -664,9 +670,15 @@ class StableDiffusionControlNetPipeline(
 
         # Check `controlnet_conditioning_scale`
         if (
-            isinstance(self.controlnet, ControlNetModel)
-            or is_compiled
-            and isinstance(self.controlnet._orig_mod, ControlNetModel)
+            (
+                isinstance(self.controlnet, ControlNetModel)
+                or is_compiled
+                and isinstance(self.controlnet._orig_mod, ControlNetModel)
+            ) or (
+                isinstance(self.controlnet, ControlNetCLIPModel)
+                or is_compiled
+                and isinstance(self.controlnet._orig_mod, ControlNetCLIPModel)
+            )
         ):
             if not isinstance(controlnet_conditioning_scale, float):
                 raise TypeError("For single controlnet: `controlnet_conditioning_scale` must be type `float`.")
@@ -1072,7 +1084,7 @@ class StableDiffusionControlNetPipeline(
 
         global_pool_conditions = (
             controlnet.config.global_pool_conditions
-            if isinstance(controlnet, ControlNetModel)
+            if isinstance(controlnet, ControlNetModel) or isinstance(controlnet, ControlNetCLIPModel)
             else controlnet.nets[0].config.global_pool_conditions
         )
         guess_mode = guess_mode or global_pool_conditions
@@ -1121,6 +1133,22 @@ class StableDiffusionControlNetPipeline(
                 guess_mode=guess_mode,
             )
             height, width = image.shape[-2:]
+        elif isinstance(controlnet, ControlNetCLIPModel):
+            # TODO: Fill this in with embedding processing
+            # prepare_image returns double the batch size as 
+            # images are copied for classifier-free guidance 
+            image = self.prepare_image(
+                image=image,
+                width=width,
+                height=height,
+                batch_size=batch_size * num_images_per_prompt,
+                num_images_per_prompt=num_images_per_prompt,
+                device=device,
+                dtype=controlnet.dtype,
+                do_classifier_free_guidance=self.do_classifier_free_guidance,
+                guess_mode=guess_mode,
+            )            
+            height, width = image.shape[-2:]
         elif isinstance(controlnet, MultiControlNetModel):
             images = []
 
@@ -1148,6 +1176,11 @@ class StableDiffusionControlNetPipeline(
             height, width = image[0].shape[-2:]
         else:
             assert False
+            
+        print("\n\n\n\n\n PRINTING IMAGE SHAPE FROM STABLE_DIFFUSION_CONTROLNET_CLIP.PY")
+        print(image.shape)
+        print(image.dtype)
+        print("\n\n\n\n")
 
         # 5. Prepare timesteps
         timesteps, num_inference_steps = retrieve_timesteps(self.scheduler, num_inference_steps, device, timesteps)
@@ -1191,7 +1224,8 @@ class StableDiffusionControlNetPipeline(
                 1.0 - float(i / len(timesteps) < s or (i + 1) / len(timesteps) > e)
                 for s, e in zip(control_guidance_start, control_guidance_end)
             ]
-            controlnet_keep.append(keeps[0] if isinstance(controlnet, ControlNetModel) else keeps)
+            controlnet_keep.append(keeps[0] if isinstance(controlnet, ControlNetModel) 
+                                   or isinstance(controlnet, ControlNetCLIPModel) else keeps)
 
         # 8. Denoising loop
         num_warmup_steps = len(timesteps) - num_inference_steps * self.scheduler.order
