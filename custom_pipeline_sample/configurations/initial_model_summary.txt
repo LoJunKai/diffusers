@@ -1,0 +1,522 @@
+The config attributes {'comment': 'taken from lllyasviel/sd-controlnet-canny'} were passed to ControlNetCLIPModel, but are not expected and will be ignored. Please verify your config.json configuration file.
+==================================================================================================================================
+Layer (type:depth-idx)                                                           Output Shape              Param #
+==================================================================================================================================
+ControlNetCLIPModel                                                              [2, 1280, 8, 8]           --
+├─Timesteps: 1-1                                                                 [2, 320]                  --
+├─TimestepEmbedding: 1-2                                                         [2, 1280]                 1,639,680
+│    └─LoRACompatibleLinear: 2-1                                                 [2, 1280]                 410,880
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─TimestepEmbedding: 1-4                                                         --                        (recursive)
+│    └─LoRACompatibleLinear: 2-3                                                 [2, 1280]                 1,639,680
+├─Conv2d: 1-5                                                                    [2, 320, 64, 64]          11,840
+├─ControlNetConditioningEmbedding: 1-6                                           [2, 320, 64, 64]          --
+│    └─Conv2d: 2-4                                                               [2, 16, 512, 512]         448
+│    └─ModuleList: 2-5                                                           --                        --
+│    │    └─Conv2d: 3-2                                                          [2, 16, 512, 512]         2,320
+│    │    └─Conv2d: 3-3                                                          [2, 32, 256, 256]         4,640
+│    │    └─Conv2d: 3-4                                                          [2, 32, 256, 256]         9,248
+│    │    └─Conv2d: 3-5                                                          [2, 96, 128, 128]         27,744
+│    │    └─Conv2d: 3-6                                                          [2, 96, 128, 128]         83,040
+│    │    └─Conv2d: 3-7                                                          [2, 256, 64, 64]          221,440
+│    └─Conv2d: 2-6                                                               [2, 320, 64, 64]          737,600
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-7                                                 [2, 320, 32, 32]          8,269,440
+│    │    └─ModuleList: 3-22                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-19                                                --                        (recursive)
+│    │    └─ModuleList: 3-22                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-19                                                --                        (recursive)
+│    │    └─ModuleList: 3-22                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-19                                                --                        (recursive)
+│    │    └─ModuleList: 3-22                                                     --                        (recursive)
+│    │    └─ModuleList: 3-23                                                     --                        (recursive)
+│    │    └─ModuleList: 3-22                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-19                                                --                        (recursive)
+│    │    └─ModuleList: 3-22                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-19                                                --                        (recursive)
+│    │    └─ModuleList: 3-22                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-19                                                --                        (recursive)
+│    │    └─ModuleList: 3-22                                                     --                        (recursive)
+│    │    └─ModuleList: 3-23                                                     --                        (recursive)
+│    │    └─ModuleList: 3-24                                                     --                        921,920
+│    └─CrossAttnDownBlock2D: 2-20                                                [2, 640, 16, 16]          30,260,480
+│    │    └─ModuleList: 3-39                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-32                                                --                        (recursive)
+│    │    └─ModuleList: 3-39                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-32                                                --                        (recursive)
+│    │    └─ModuleList: 3-39                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-32                                                --                        (recursive)
+│    │    └─ModuleList: 3-39                                                     --                        (recursive)
+│    │    └─ModuleList: 3-40                                                     --                        (recursive)
+│    │    └─ModuleList: 3-39                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-32                                                --                        (recursive)
+│    │    └─ModuleList: 3-39                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-32                                                --                        (recursive)
+│    │    └─ModuleList: 3-39                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-32                                                --                        (recursive)
+│    │    └─ModuleList: 3-39                                                     --                        (recursive)
+│    │    └─ModuleList: 3-40                                                     --                        (recursive)
+│    │    └─ModuleList: 3-41                                                     --                        3,687,040
+│    └─CrossAttnDownBlock2D: 2-33                                                [2, 1280, 8, 8]           115,407,360
+│    │    └─ModuleList: 3-56                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-45                                                --                        (recursive)
+│    │    └─ModuleList: 3-56                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-45                                                --                        (recursive)
+│    │    └─ModuleList: 3-56                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-45                                                --                        (recursive)
+│    │    └─ModuleList: 3-56                                                     --                        (recursive)
+│    │    └─ModuleList: 3-57                                                     --                        (recursive)
+│    │    └─ModuleList: 3-56                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-45                                                --                        (recursive)
+│    │    └─ModuleList: 3-56                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-45                                                --                        (recursive)
+│    │    └─ModuleList: 3-56                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─CrossAttnDownBlock2D: 2-45                                                --                        (recursive)
+│    │    └─ModuleList: 3-56                                                     --                        (recursive)
+│    │    └─ModuleList: 3-57                                                     --                        (recursive)
+│    │    └─ModuleList: 3-58                                                     --                        14,746,880
+│    └─DownBlock2D: 2-46                                                         [2, 1280, 8, 8]           31,138,560
+│    │    └─ModuleList: 3-71                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─DownBlock2D: 2-58                                                         --                        (recursive)
+│    │    └─ModuleList: 3-71                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─DownBlock2D: 2-58                                                         --                        (recursive)
+│    │    └─ModuleList: 3-71                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─DownBlock2D: 2-58                                                         --                        (recursive)
+│    │    └─ModuleList: 3-71                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─DownBlock2D: 2-58                                                         --                        (recursive)
+│    │    └─ModuleList: 3-71                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─DownBlock2D: 2-58                                                         --                        (recursive)
+│    │    └─ModuleList: 3-71                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-54                                                  --                        (recursive)
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+├─ModuleList: 1-55                                                               --                        (recursive)
+│    └─DownBlock2D: 2-58                                                         --                        (recursive)
+│    │    └─ModuleList: 3-71                                                     --                        (recursive)
+├─UNetMidBlock2DCrossAttn: 1-56                                                  [2, 1280, 8, 8]           --
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-72                                                  [2, 1280, 8, 8]           31,138,560
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+│    │    └─ResnetBlock2D: 3-78                                                  --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+│    │    └─ResnetBlock2D: 3-78                                                  --                        (recursive)
+│    │    └─ResnetBlock2D: 3-77                                                  --                        (recursive)
+│    │    └─ResnetBlock2D: 3-78                                                  --                        (recursive)
+│    └─ModuleList: 2-60                                                          --                        --
+│    │    └─Transformer2DModel: 3-79                                             [2, 1280, 8, 8]           34,760,960
+│    └─ModuleList: 2-61                                                          --                        (recursive)
+│    │    └─ResnetBlock2D: 3-80                                                  [2, 1280, 8, 8]           31,138,560
+├─ModuleList: 1-57                                                               --                        --
+│    └─Conv2d: 2-62                                                              [2, 320, 64, 64]          102,720
+│    └─Conv2d: 2-63                                                              [2, 320, 64, 64]          102,720
+│    └─Conv2d: 2-64                                                              [2, 320, 64, 64]          102,720
+│    └─Conv2d: 2-65                                                              [2, 320, 32, 32]          102,720
+│    └─Conv2d: 2-66                                                              [2, 640, 32, 32]          410,240
+│    └─Conv2d: 2-67                                                              [2, 640, 32, 32]          410,240
+│    └─Conv2d: 2-68                                                              [2, 640, 16, 16]          410,240
+│    └─Conv2d: 2-69                                                              [2, 1280, 16, 16]         1,639,680
+│    └─Conv2d: 2-70                                                              [2, 1280, 16, 16]         1,639,680
+│    └─Conv2d: 2-71                                                              [2, 1280, 8, 8]           1,639,680
+│    └─Conv2d: 2-72                                                              [2, 1280, 8, 8]           1,639,680
+│    └─Conv2d: 2-73                                                              [2, 1280, 8, 8]           1,639,680
+├─Conv2d: 1-58                                                                   [2, 1280, 8, 8]           1,639,680
+==================================================================================================================================
+Total params: 716,383,760
+Trainable params: 716,383,760
+Non-trainable params: 0
+Total mult-adds (Units.GIGABYTES): 137.43
+==================================================================================================================================
+Input size (MB): 6.90
+Forward/backward pass size (MB): 2332.79
+Params size (MB): 1445.12
+Estimated Total Size (MB): 3784.80
+==================================================================================================================================
+
+
+ControlNetCLIPModel(
+  (conv_in): Conv2d(4, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (time_proj): Timesteps()
+  (time_embedding): TimestepEmbedding(
+    (linear_1): LoRACompatibleLinear(in_features=320, out_features=1280, bias=True)
+    (act): SiLU()
+    (linear_2): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=True)
+  )
+  (controlnet_cond_embedding): ControlNetConditioningEmbedding(
+    (conv_in): Conv2d(3, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (blocks): ModuleList(
+      (0): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): Conv2d(16, 32, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+      (2): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (3): Conv2d(32, 96, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+      (4): Conv2d(96, 96, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (5): Conv2d(96, 256, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+    )
+    (conv_out): Conv2d(256, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  )
+  (down_blocks): ModuleList(
+    (0): CrossAttnDownBlock2D(
+      (attentions): ModuleList(
+        (0-1): 2 x Transformer2DModel(
+          (norm): GroupNorm(32, 320, eps=1e-06, affine=True)
+          (proj_in): LoRACompatibleConv(320, 320, kernel_size=(1, 1), stride=(1, 1))
+          (transformer_blocks): ModuleList(
+            (0): BasicTransformerBlock(
+              (norm1): LayerNorm((320,), eps=1e-05, elementwise_affine=True)
+              (attn1): Attention(
+                (to_q): LoRACompatibleLinear(in_features=320, out_features=320, bias=False)
+                (to_k): LoRACompatibleLinear(in_features=320, out_features=320, bias=False)
+                (to_v): LoRACompatibleLinear(in_features=320, out_features=320, bias=False)
+                (to_out): ModuleList(
+                  (0): LoRACompatibleLinear(in_features=320, out_features=320, bias=True)
+                  (1): Dropout(p=0.0, inplace=False)
+                )
+              )
+              (norm2): LayerNorm((320,), eps=1e-05, elementwise_affine=True)
+              (attn2): Attention(
+                (to_q): LoRACompatibleLinear(in_features=320, out_features=320, bias=False)
+                (to_k): LoRACompatibleLinear(in_features=768, out_features=320, bias=False)
+                (to_v): LoRACompatibleLinear(in_features=768, out_features=320, bias=False)
+                (to_out): ModuleList(
+                  (0): LoRACompatibleLinear(in_features=320, out_features=320, bias=True)
+                  (1): Dropout(p=0.0, inplace=False)
+                )
+              )
+              (norm3): LayerNorm((320,), eps=1e-05, elementwise_affine=True)
+              (ff): FeedForward(
+                (net): ModuleList(
+                  (0): GEGLU(
+                    (proj): LoRACompatibleLinear(in_features=320, out_features=2560, bias=True)
+                  )
+                  (1): Dropout(p=0.0, inplace=False)
+                  (2): LoRACompatibleLinear(in_features=1280, out_features=320, bias=True)
+                )
+              )
+            )
+          )
+          (proj_out): LoRACompatibleConv(320, 320, kernel_size=(1, 1), stride=(1, 1))
+        )
+      )
+      (resnets): ModuleList(
+        (0-1): 2 x ResnetBlock2D(
+          (norm1): GroupNorm(32, 320, eps=1e-05, affine=True)
+          (conv1): LoRACompatibleConv(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (time_emb_proj): LoRACompatibleLinear(in_features=1280, out_features=320, bias=True)
+          (norm2): GroupNorm(32, 320, eps=1e-05, affine=True)
+          (dropout): Dropout(p=0.0, inplace=False)
+          (conv2): LoRACompatibleConv(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (nonlinearity): SiLU()
+        )
+      )
+      (downsamplers): ModuleList(
+        (0): Downsample2D(
+          (conv): LoRACompatibleConv(320, 320, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+        )
+      )
+    )
+    (1): CrossAttnDownBlock2D(
+      (attentions): ModuleList(
+        (0-1): 2 x Transformer2DModel(
+          (norm): GroupNorm(32, 640, eps=1e-06, affine=True)
+          (proj_in): LoRACompatibleConv(640, 640, kernel_size=(1, 1), stride=(1, 1))
+          (transformer_blocks): ModuleList(
+            (0): BasicTransformerBlock(
+              (norm1): LayerNorm((640,), eps=1e-05, elementwise_affine=True)
+              (attn1): Attention(
+                (to_q): LoRACompatibleLinear(in_features=640, out_features=640, bias=False)
+                (to_k): LoRACompatibleLinear(in_features=640, out_features=640, bias=False)
+                (to_v): LoRACompatibleLinear(in_features=640, out_features=640, bias=False)
+                (to_out): ModuleList(
+                  (0): LoRACompatibleLinear(in_features=640, out_features=640, bias=True)
+                  (1): Dropout(p=0.0, inplace=False)
+                )
+              )
+              (norm2): LayerNorm((640,), eps=1e-05, elementwise_affine=True)
+              (attn2): Attention(
+                (to_q): LoRACompatibleLinear(in_features=640, out_features=640, bias=False)
+                (to_k): LoRACompatibleLinear(in_features=768, out_features=640, bias=False)
+                (to_v): LoRACompatibleLinear(in_features=768, out_features=640, bias=False)
+                (to_out): ModuleList(
+                  (0): LoRACompatibleLinear(in_features=640, out_features=640, bias=True)
+                  (1): Dropout(p=0.0, inplace=False)
+                )
+              )
+              (norm3): LayerNorm((640,), eps=1e-05, elementwise_affine=True)
+              (ff): FeedForward(
+                (net): ModuleList(
+                  (0): GEGLU(
+                    (proj): LoRACompatibleLinear(in_features=640, out_features=5120, bias=True)
+                  )
+                  (1): Dropout(p=0.0, inplace=False)
+                  (2): LoRACompatibleLinear(in_features=2560, out_features=640, bias=True)
+                )
+              )
+            )
+          )
+          (proj_out): LoRACompatibleConv(640, 640, kernel_size=(1, 1), stride=(1, 1))
+        )
+      )
+      (resnets): ModuleList(
+        (0): ResnetBlock2D(
+          (norm1): GroupNorm(32, 320, eps=1e-05, affine=True)
+          (conv1): LoRACompatibleConv(320, 640, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (time_emb_proj): LoRACompatibleLinear(in_features=1280, out_features=640, bias=True)
+          (norm2): GroupNorm(32, 640, eps=1e-05, affine=True)
+          (dropout): Dropout(p=0.0, inplace=False)
+          (conv2): LoRACompatibleConv(640, 640, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (nonlinearity): SiLU()
+          (conv_shortcut): LoRACompatibleConv(320, 640, kernel_size=(1, 1), stride=(1, 1))
+        )
+        (1): ResnetBlock2D(
+          (norm1): GroupNorm(32, 640, eps=1e-05, affine=True)
+          (conv1): LoRACompatibleConv(640, 640, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (time_emb_proj): LoRACompatibleLinear(in_features=1280, out_features=640, bias=True)
+          (norm2): GroupNorm(32, 640, eps=1e-05, affine=True)
+          (dropout): Dropout(p=0.0, inplace=False)
+          (conv2): LoRACompatibleConv(640, 640, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (nonlinearity): SiLU()
+        )
+      )
+      (downsamplers): ModuleList(
+        (0): Downsample2D(
+          (conv): LoRACompatibleConv(640, 640, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+        )
+      )
+    )
+    (2): CrossAttnDownBlock2D(
+      (attentions): ModuleList(
+        (0-1): 2 x Transformer2DModel(
+          (norm): GroupNorm(32, 1280, eps=1e-06, affine=True)
+          (proj_in): LoRACompatibleConv(1280, 1280, kernel_size=(1, 1), stride=(1, 1))
+          (transformer_blocks): ModuleList(
+            (0): BasicTransformerBlock(
+              (norm1): LayerNorm((1280,), eps=1e-05, elementwise_affine=True)
+              (attn1): Attention(
+                (to_q): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=False)
+                (to_k): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=False)
+                (to_v): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=False)
+                (to_out): ModuleList(
+                  (0): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=True)
+                  (1): Dropout(p=0.0, inplace=False)
+                )
+              )
+              (norm2): LayerNorm((1280,), eps=1e-05, elementwise_affine=True)
+              (attn2): Attention(
+                (to_q): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=False)
+                (to_k): LoRACompatibleLinear(in_features=768, out_features=1280, bias=False)
+                (to_v): LoRACompatibleLinear(in_features=768, out_features=1280, bias=False)
+                (to_out): ModuleList(
+                  (0): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=True)
+                  (1): Dropout(p=0.0, inplace=False)
+                )
+              )
+              (norm3): LayerNorm((1280,), eps=1e-05, elementwise_affine=True)
+              (ff): FeedForward(
+                (net): ModuleList(
+                  (0): GEGLU(
+                    (proj): LoRACompatibleLinear(in_features=1280, out_features=10240, bias=True)
+                  )
+                  (1): Dropout(p=0.0, inplace=False)
+                  (2): LoRACompatibleLinear(in_features=5120, out_features=1280, bias=True)
+                )
+              )
+            )
+          )
+          (proj_out): LoRACompatibleConv(1280, 1280, kernel_size=(1, 1), stride=(1, 1))
+        )
+      )
+      (resnets): ModuleList(
+        (0): ResnetBlock2D(
+          (norm1): GroupNorm(32, 640, eps=1e-05, affine=True)
+          (conv1): LoRACompatibleConv(640, 1280, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (time_emb_proj): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=True)
+          (norm2): GroupNorm(32, 1280, eps=1e-05, affine=True)
+          (dropout): Dropout(p=0.0, inplace=False)
+          (conv2): LoRACompatibleConv(1280, 1280, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (nonlinearity): SiLU()
+          (conv_shortcut): LoRACompatibleConv(640, 1280, kernel_size=(1, 1), stride=(1, 1))
+        )
+        (1): ResnetBlock2D(
+          (norm1): GroupNorm(32, 1280, eps=1e-05, affine=True)
+          (conv1): LoRACompatibleConv(1280, 1280, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (time_emb_proj): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=True)
+          (norm2): GroupNorm(32, 1280, eps=1e-05, affine=True)
+          (dropout): Dropout(p=0.0, inplace=False)
+          (conv2): LoRACompatibleConv(1280, 1280, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (nonlinearity): SiLU()
+        )
+      )
+      (downsamplers): ModuleList(
+        (0): Downsample2D(
+          (conv): LoRACompatibleConv(1280, 1280, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+        )
+      )
+    )
+    (3): DownBlock2D(
+      (resnets): ModuleList(
+        (0-1): 2 x ResnetBlock2D(
+          (norm1): GroupNorm(32, 1280, eps=1e-05, affine=True)
+          (conv1): LoRACompatibleConv(1280, 1280, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (time_emb_proj): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=True)
+          (norm2): GroupNorm(32, 1280, eps=1e-05, affine=True)
+          (dropout): Dropout(p=0.0, inplace=False)
+          (conv2): LoRACompatibleConv(1280, 1280, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (nonlinearity): SiLU()
+        )
+      )
+    )
+  )
+  (controlnet_down_blocks): ModuleList(
+    (0-3): 4 x Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1))
+    (4-6): 3 x Conv2d(640, 640, kernel_size=(1, 1), stride=(1, 1))
+    (7-11): 5 x Conv2d(1280, 1280, kernel_size=(1, 1), stride=(1, 1))
+  )
+  (controlnet_mid_block): Conv2d(1280, 1280, kernel_size=(1, 1), stride=(1, 1))
+  (mid_block): UNetMidBlock2DCrossAttn(
+    (attentions): ModuleList(
+      (0): Transformer2DModel(
+        (norm): GroupNorm(32, 1280, eps=1e-06, affine=True)
+        (proj_in): LoRACompatibleConv(1280, 1280, kernel_size=(1, 1), stride=(1, 1))
+        (transformer_blocks): ModuleList(
+          (0): BasicTransformerBlock(
+            (norm1): LayerNorm((1280,), eps=1e-05, elementwise_affine=True)
+            (attn1): Attention(
+              (to_q): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=False)
+              (to_k): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=False)
+              (to_v): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=False)
+              (to_out): ModuleList(
+                (0): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=True)
+                (1): Dropout(p=0.0, inplace=False)
+              )
+            )
+            (norm2): LayerNorm((1280,), eps=1e-05, elementwise_affine=True)
+            (attn2): Attention(
+              (to_q): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=False)
+              (to_k): LoRACompatibleLinear(in_features=768, out_features=1280, bias=False)
+              (to_v): LoRACompatibleLinear(in_features=768, out_features=1280, bias=False)
+              (to_out): ModuleList(
+                (0): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=True)
+                (1): Dropout(p=0.0, inplace=False)
+              )
+            )
+            (norm3): LayerNorm((1280,), eps=1e-05, elementwise_affine=True)
+            (ff): FeedForward(
+              (net): ModuleList(
+                (0): GEGLU(
+                  (proj): LoRACompatibleLinear(in_features=1280, out_features=10240, bias=True)
+                )
+                (1): Dropout(p=0.0, inplace=False)
+                (2): LoRACompatibleLinear(in_features=5120, out_features=1280, bias=True)
+              )
+            )
+          )
+        )
+        (proj_out): LoRACompatibleConv(1280, 1280, kernel_size=(1, 1), stride=(1, 1))
+      )
+    )
+    (resnets): ModuleList(
+      (0-1): 2 x ResnetBlock2D(
+        (norm1): GroupNorm(32, 1280, eps=1e-05, affine=True)
+        (conv1): LoRACompatibleConv(1280, 1280, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (time_emb_proj): LoRACompatibleLinear(in_features=1280, out_features=1280, bias=True)
+        (norm2): GroupNorm(32, 1280, eps=1e-05, affine=True)
+        (dropout): Dropout(p=0.0, inplace=False)
+        (conv2): LoRACompatibleConv(1280, 1280, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (nonlinearity): SiLU()
+      )
+    )
+  )
+)
