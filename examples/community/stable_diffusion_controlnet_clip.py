@@ -1134,9 +1134,11 @@ class StableDiffusionControlNetCLIPPipeline(
             )
             height, width = image.shape[-2:]
         elif isinstance(controlnet, ControlNetCLIPModel):
-            # TODO: Fill this in with embedding processing
             # prepare_image returns double the batch size as 
             # images are copied for classifier-free guidance 
+            # Changing config might cause how the image is preprocessed
+            # in self.control_image_processor.preprocess(),
+            # interfering with the image embedding.
             image = self.prepare_image(
                 image=image,
                 width=width,
@@ -1176,12 +1178,6 @@ class StableDiffusionControlNetCLIPPipeline(
             height, width = image[0].shape[-2:]
         else:
             assert False
-            
-        print("\n\n\n\n\n PRINTING IMAGE SHAPE FROM STABLE_DIFFUSION_CONTROLNET_CLIP.PY")
-        print(image.shape)
-        print(image.dtype)
-        print("\n\n\n\n")
-
         # 5. Prepare timesteps
         timesteps, num_inference_steps = retrieve_timesteps(self.scheduler, num_inference_steps, device, timesteps)
         self._num_timesteps = len(timesteps)
@@ -1191,13 +1187,21 @@ class StableDiffusionControlNetCLIPPipeline(
         latents = self.prepare_latents(
             batch_size * num_images_per_prompt,
             num_channels_latents,
-            height,
-            width,
+            # Fix the height and width 
+            # So that the output will be the same: torch.Size([*, 4, 64, 64])
+            # height,
+            # width,
+            512,
+            512,
             prompt_embeds.dtype,
             device,
             generator,
             latents,
         )
+        
+        # 5.5 Check out correct size
+        assert image.shape[1:] == torch.Size([1024, 16, 16]), f"image not of the correct size: {image.shape}"
+        assert latents.shape[1:] == torch.Size([4, 64, 64]), f"latents not of the correct size: {latents.shape}"
 
         # 6.5 Optionally get Guidance Scale Embedding
         timestep_cond = None
@@ -1269,6 +1273,15 @@ class StableDiffusionControlNetCLIPPipeline(
                     guess_mode=guess_mode,
                     return_dict=False,
                 )
+                
+                # Debug prints
+                # print("down_block_res_samples:", len(down_block_res_samples))
+                # for j in down_block_res_samples:
+                #     print(j.shape)
+                # print("middle seperator")
+                # print("mid_block_res_samples:", len(mid_block_res_sample))
+                # for j in mid_block_res_sample:
+                #     print(j.shape)
 
                 if guess_mode and self.do_classifier_free_guidance:
                     # Infered ControlNet only for the conditional batch.

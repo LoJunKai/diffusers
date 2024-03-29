@@ -1,8 +1,8 @@
 ''' This script is used to show the model summary.
 
 This script runs stable_diffusion_controlnet_clip.py under community pipelines.
-UNet model used by runwayml/stable-diffusion-v1-5:
 
+UNet model used by runwayml/stable-diffusion-v1-5:
 <class 'diffusers.models.unets.unet_2d_condition.UNet2DConditionModel'>
 
 We now change the structure of Controlnet by processing embeddings straight,
@@ -11,6 +11,48 @@ This will be reconstructed from the CLIP embeddings (sep length of 257, throw aw
 
 Output of the down sample will be short by 2 blocks, so we will have to generate zeros to fill in.
 This will then be added as `down_block_additional_residuals` back in the unet.
+
+Outputs of controlnet using the original lllyasviel/sd-controlnet-canny config.json
+    down_block_res_samples: 12
+    torch.Size([2, 320, 64, 64])
+    torch.Size([2, 320, 64, 64])
+    torch.Size([2, 320, 64, 64])
+    torch.Size([2, 320, 32, 32])
+    torch.Size([2, 640, 32, 32])
+    torch.Size([2, 640, 32, 32])
+    torch.Size([2, 640, 16, 16])
+    torch.Size([2, 1280, 16, 16])
+    torch.Size([2, 1280, 16, 16])
+    torch.Size([2, 1280, 8, 8])
+    torch.Size([2, 1280, 8, 8])
+    torch.Size([2, 1280, 8, 8])
+    mid_block_res_samples: 2
+    torch.Size([1280, 8, 8])
+    torch.Size([1280, 8, 8])
+    
+    
+CHANGE OF PLANS:
+I realised that the downsample_block takes in latents (sample) and temb too.
+These are the initial noisy image and the time embeddings.
+These will still have the 64x64 shape, which I do not know how to change it to 16x16.
+
+sample, res_samples = downsample_block(
+    hidden_states=sample,
+    temb=emb,
+    encoder_hidden_states=encoder_hidden_states,
+    attention_mask=attention_mask,
+    cross_attention_kwargs=cross_attention_kwargs,
+)
+
+So what we now do is to concatenate the image embeddings to sample only during the last 2 blocks of UNet.
+
+TODO: 
+    Think about whether to pass in the image for the first 2 blocks... will that be beneficial?
+    But there will not be images if we are doing the aggregator.
+TODO: 
+    Think about how does controlnet work... Why does passing in the conditioning image as the input image help in conditioning?
+    Think about if skipping the first 2 blocks will result in a lower res/higher level adherence, 
+    resulting in inability to follow low level concepts.
 
 '''
 # Enable import of StableDiffusionControlNetCLIPPipeline
@@ -61,13 +103,13 @@ controlnet = ControlNetCLIPModel.from_config(config)
 image = load_image(
     "https://hf.co/datasets/huggingface/documentation-images/resolve/main/diffusers/input_image_vermeer.png"
 )
-image = np.array(image)
 
-# get canny image
-image = cv2.Canny(image, 100, 200)
-image = image[:, :, None]
-image = np.concatenate([image, image, image], axis=2)
-canny_image = Image.fromarray(image)
+# # get canny image
+# image = np.array(image)
+# image = cv2.Canny(image, 100, 200)
+# image = image[:, :, None]
+# image = np.concatenate([image, image, image], axis=2)
+# input_embed = Image.fromarray(image)
 
 # load control net and stable diffusion v1-5
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -84,15 +126,23 @@ if device == 'cuda':
     # pipe.enable_model_cpu_offload()
 else:
     # Run with torch.float32 as CPU doesn't support half precision
-    controlnet = ControlNetCLIPModel.from_pretrained("lllyasviel/sd-controlnet-canny", torch_dtype=torch.float32)
+    # controlnet = ControlNetCLIPModel.from_pretrained("lllyasviel/sd-controlnet-canny", torch_dtype=torch.float32)
     pipe = StableDiffusionControlNetCLIPPipeline.from_pretrained(
         "runwayml/stable-diffusion-v1-5", controlnet=controlnet, torch_dtype=torch.float32
     )
 
 # speed up diffusion process with faster scheduler and memory optimization
 pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
-# generate image
+
+clip_pipeline = CLIPWrapper()
+
+
+# Generate image
+last_hidden_state = clip_pipeline.get_img_embed(image)
+input_embed = CLIPWrapper.reverse_img_embed(last_hidden_state)
+
 generator = torch.manual_seed(0)
 image = pipe(
-    "futuristic-looking woman", num_inference_steps=20, generator=generator, image=canny_image
+    "futuristic-looking woman", num_inference_steps=20, 
+    generator=generator, image=input_embed
 ).images[0]

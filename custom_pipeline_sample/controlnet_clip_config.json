@@ -4,6 +4,7 @@
     "_diffusers_version": "0.14.0.dev0",
     "act_fn": "silu",
     "attention_head_dim": 8,
+    "clip_embed_dim": 1024,
     "block_out_channels": [
       320,
       640,

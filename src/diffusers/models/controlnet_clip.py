@@ -194,6 +194,7 @@ class ControlNetCLIPModel(ModelMixin, ConfigMixin, FromOriginalControlNetMixin):
         ),
         mid_block_type: Optional[str] = "UNetMidBlock2DCrossAttn",
         only_cross_attention: Union[bool, Tuple[bool]] = False,
+        clip_embed_dim=1024,
         block_out_channels: Tuple[int, ...] = (320, 640, 1280, 1280),
         layers_per_block: int = 2,
         downsample_padding: int = 1,
@@ -254,6 +255,9 @@ class ControlNetCLIPModel(ModelMixin, ConfigMixin, FromOriginalControlNetMixin):
         conv_in_padding = (conv_in_kernel - 1) // 2
         self.conv_in = nn.Conv2d(
             in_channels, block_out_channels[0], kernel_size=conv_in_kernel, padding=conv_in_padding
+        )
+        self.conv_cond_embedding = nn.Conv2d(
+            clip_embed_dim, block_out_channels[1], kernel_size=1, padding=0
         )
 
         # time
@@ -792,14 +796,30 @@ class ControlNetCLIPModel(ModelMixin, ConfigMixin, FromOriginalControlNetMixin):
         emb = emb + aug_emb if aug_emb is not None else emb
 
         # 2. pre-process
+        # Skip previous pre-process of changing image from 3x512x512 to 320x64x64
+        # Do instead 1024x16x16 to 640x16x16
+
+        # sample goes from torch.Size([2, 4, 64, 64]) --> torch.Size([2, 320, 64, 64])
         sample = self.conv_in(sample)
 
-        controlnet_cond = self.controlnet_cond_embedding(controlnet_cond)
-        sample = sample + controlnet_cond
+        controlnet_cond = self.conv_cond_embedding(controlnet_cond)
+        # controlnet_cond = self.controlnet_cond_embedding(controlnet_cond)
+        # sample = sample + controlnet_cond
 
         # 3. down
         down_block_res_samples = (sample,)
+        add_sample_once = 0
         for downsample_block in self.down_blocks:
+            # print("debug sample shape", sample.shape)
+            if sample.shape == controlnet_cond.shape:
+                # add controlnet_cond only when the shape matches
+                sample = sample + controlnet_cond
+                # print("debug ADDING TOGETHER ONCE!!! (hopefully)")
+                if add_sample_once > 0:
+                    raise ValueError("controlnet_cond added to sample more than once. \n" +
+                                     "Uncomment the debug functions to find out more.")
+                add_sample_once += 1
+
             if hasattr(downsample_block, "has_cross_attention") and downsample_block.has_cross_attention:
                 sample, res_samples = downsample_block(
                     hidden_states=sample,
@@ -812,6 +832,10 @@ class ControlNetCLIPModel(ModelMixin, ConfigMixin, FromOriginalControlNetMixin):
                 sample, res_samples = downsample_block(hidden_states=sample, temb=emb)
 
             down_block_res_samples += res_samples
+            
+        if add_sample_once == 0:
+            raise ValueError("controlnet_cond not added to sample. \n" +
+                             "Uncomment the debug functions to find out more.")
 
         # 4. mid
         if self.mid_block is not None:
