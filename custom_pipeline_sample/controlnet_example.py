@@ -71,7 +71,7 @@ from diffusers.utils import load_image
 from stable_diffusion_controlnet_clip import StableDiffusionControlNetCLIPPipeline
 from diffusers import ControlNetCLIPModel, UniPCMultistepScheduler
 
-from clip_preprocess import CLIPWrapper
+from diffusers.models.controlnet_clip import CLIPWrapper
 
 # !pip install opencv-python transformers accelerate
 # from diffusers import StableDiffusionControlNetPipeline, ControlNetModel, UniPCMultistepScheduler
@@ -134,15 +134,14 @@ else:
 # speed up diffusion process with faster scheduler and memory optimization
 pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
 
-clip_pipeline = CLIPWrapper()
+# clip_pipeline = CLIPWrapper()
 
-
-# Generate image
-last_hidden_state = clip_pipeline.get_img_embed(image)
-input_embed = CLIPWrapper.reverse_img_embed(last_hidden_state)
+# # Generate image
+# last_hidden_state = clip_pipeline.get_img_embed(image)
+# input_embed = CLIPWrapper.reverse_img_embed(last_hidden_state)
 
 generator = torch.manual_seed(0)
 image = pipe(
     "futuristic-looking woman", num_inference_steps=20, 
-    generator=generator, image=input_embed
+    generator=generator, image=image
 ).images[0]
