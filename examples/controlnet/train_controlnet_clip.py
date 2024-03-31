@@ -43,17 +43,25 @@ from transformers import AutoTokenizer, PretrainedConfig
 import diffusers
 from diffusers import (
     AutoencoderKL,
-    ControlNetModel,
+    ControlNetCLIPModel,
     DDPMScheduler,
-    StableDiffusionControlNetPipeline,
+    # StableDiffusionControlNetCLIPPipeline,
     UNet2DConditionModel,
     UniPCMultistepScheduler,
 )
+from diffusers.models.controlnet_clip import CLIPWrapper
 from diffusers.optimization import get_scheduler
 from diffusers.utils import check_min_version, is_wandb_available
 from diffusers.utils.hub_utils import load_or_create_model_card, populate_model_card
 from diffusers.utils.import_utils import is_xformers_available
 from diffusers.utils.torch_utils import is_compiled_module
+
+# Enable import of StableDiffusionControlNetCLIPPipeline
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent / "community"))
+from stable_diffusion_controlnet_clip import StableDiffusionControlNetCLIPPipeline
 
 
 if is_wandb_available():
@@ -84,9 +92,9 @@ def log_validation(
     if not is_final_validation:
         controlnet = accelerator.unwrap_model(controlnet)
     else:
-        controlnet = ControlNetModel.from_pretrained(args.output_dir, torch_dtype=weight_dtype)
+        controlnet = ControlNetCLIPModel.from_pretrained(args.output_dir, torch_dtype=weight_dtype)
 
-    pipeline = StableDiffusionControlNetPipeline.from_pretrained(
+    pipeline = StableDiffusionControlNetCLIPPipeline.from_pretrained(
         args.pretrained_model_name_or_path,
         vae=vae,
         text_encoder=text_encoder,
@@ -699,8 +707,25 @@ def make_train_dataset(args, tokenizer, accelerator):
         images = [image.convert("RGB") for image in examples[image_column]]
         images = [image_transforms(image) for image in images]
 
-        conditioning_images = [image.convert("RGB") for image in examples[conditioning_image_column]]
-        conditioning_images = [conditioning_image_transforms(image) for image in conditioning_images]
+        # Only preprocess if provided conditioning_image_column is not image embeddings
+        if examples[conditioning_image_column][0].shape[1:] == torch.Size([1024, 16, 16]):
+            # No further preprocessing needed.
+            conditioning_images = list(examples[conditioning_image_column])
+
+        elif examples[conditioning_image_column][0].shape[1:] == torch.Size([257, 1024]):
+            # Need to reverse img_embed to restore spatiality
+            # TODO: Untested
+            conditioning_images = [CLIPWrapper.reverse_img_embed(img_embed)
+                                   for img_embed in examples[conditioning_image_column]]
+        else:
+            # Provided raw image
+            # TODO: Untested
+            preprocessor = CLIPWrapper(pretrained_model_name_or_path = "openai/clip-vit-large-patch14")
+            conditioning_images = [preprocessor.preprocess_image(img)
+                                   for img in examples[conditioning_image_column]]
+        
+        # conditioning_images = [image.convert("RGB") for image in examples[conditioning_image_column]]
+        # conditioning_images = [conditioning_image_transforms(image) for image in conditioning_images]
 
         examples["pixel_values"] = images
         examples["conditioning_pixel_values"] = conditioning_images
@@ -807,10 +832,10 @@ def main(args):
 
     if args.controlnet_model_name_or_path:
         logger.info("Loading existing controlnet weights")
-        controlnet = ControlNetModel.from_pretrained(args.controlnet_model_name_or_path)
+        controlnet = ControlNetCLIPModel.from_pretrained(args.controlnet_model_name_or_path)
     else:
         logger.info("Initializing controlnet weights from unet")
-        controlnet = ControlNetModel.from_unet(unet)
+        controlnet = ControlNetCLIPModel.from_unet(unet)
 
     # Taken from [Sayak Paul's Diffusers PR #6511](https://github.com/huggingface/diffusers/pull/6511/files)
     def unwrap_model(model):
@@ -840,7 +865,7 @@ def main(args):
                 model = models.pop()
 
                 # load diffusers style into model
-                load_model = ControlNetModel.from_pretrained(input_dir, subfolder="controlnet")
+                load_model = ControlNetCLIPModel.from_pretrained(input_dir, subfolder="controlnet")
                 model.register_to_config(**load_model.config)
 
                 model.load_state_dict(load_model.state_dict())

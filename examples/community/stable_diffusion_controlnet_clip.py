@@ -27,6 +27,7 @@ from transformers import CLIPImageProcessor, CLIPTextModel, CLIPTokenizer, CLIPV
 from diffusers.image_processor import PipelineImageInput, VaeImageProcessor
 from diffusers.loaders import FromSingleFileMixin, IPAdapterMixin, LoraLoaderMixin, TextualInversionLoaderMixin
 from diffusers.models import AutoencoderKL, ControlNetModel, ControlNetCLIPModel, ImageProjection, UNet2DConditionModel
+from diffusers.models.controlnet_clip import CLIPWrapper
 from diffusers.models.lora import adjust_lora_scale_text_encoder
 from diffusers.schedulers import KarrasDiffusionSchedulers
 from diffusers.utils import (
@@ -1139,6 +1140,27 @@ class StableDiffusionControlNetCLIPPipeline(
             # Changing config might cause how the image is preprocessed
             # in self.control_image_processor.preprocess(),
             # interfering with the image embedding.
+
+            # Convert image to img_embed only if provided is image
+            sample_image = image[0] if isinstance(image, list) else image
+            
+            convert_to_embed = False
+            if isinstance(sample_image, PIL.Image.Image):
+                convert_to_embed = True
+            if (isinstance(sample_image, np.ndarray) and 
+                sample_image.shape[1:] != (1024, 16, 16)):
+                convert_to_embed = True
+            if isinstance(sample_image, torch.Tensor):
+                assert sample_image.shape[1:] == torch.Size([1024, 16, 16]), f"image not of the correct size: {sample_image.shape}"
+            
+            if convert_to_embed:
+                preprocessor = CLIPWrapper(pretrained_model_name_or_path="openai/clip-vit-large-patch14")
+
+                if isinstance(image, list):
+                    image = [preprocessor.preprocess_image(img) for img in image]
+                else:
+                    image = preprocessor.preprocess_image(image)  
+                    
             image = self.prepare_image(
                 image=image,
                 width=width,
