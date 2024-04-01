@@ -722,6 +722,7 @@ def make_train_dataset(args, tokenizer, accelerator):
         else:
             # Provided raw image
             # TODO: Untested
+            # Inefficiency: This will initialize CLIP multiple times throughout training!
             preprocessor = CLIPWrapper(pretrained_model_name_or_path = "openai/clip-vit-large-patch14")
             conditioning_images = [preprocessor.preprocess_image(img)
                                    for img in examples[conditioning_image_column]]

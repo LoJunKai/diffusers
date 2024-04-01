@@ -158,7 +158,7 @@ class CLIPWrapper:
         '''
         # Check type of clip_embed
         assert isinstance(clip_embed, torch.FloatTensor), (
-            "clip_embed has to be of torch.FloatTensor."
+            "clip_embed has to be of torch.FloatTensor. "
             f"{type(clip_embed)} provided instead."
         )
         # Check shape of img_embed = torch.Size([*, 257, 1024])
@@ -176,6 +176,10 @@ class CLIPWrapper:
         # Reshape to 16 x 16
         reshaped_embed = torch.unflatten(transposed_embed, -1, (16, 16))
         # shape = [*, 1024, 16, 16]
+        
+        # Remove redundant dimensions to allow batches.
+        reshaped_embed = reshaped_embed.squeeze()
+        # if shape = [1, 1024, 16, 16], shape = [1024, 16, 16]
 
         return reshaped_embed
 
