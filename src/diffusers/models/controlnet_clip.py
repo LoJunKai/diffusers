@@ -156,6 +156,11 @@ class CLIPWrapper:
         ### TODO: Unable to verify if the output resembles the spatial arrangement of the original image.
 
         '''
+        # Check type of clip_embed
+        assert isinstance(clip_embed, torch.FloatTensor), (
+            "clip_embed has to be of torch.FloatTensor."
+            f"{type(clip_embed)} provided instead."
+        )
         # Check shape of img_embed = torch.Size([*, 257, 1024])
         assert clip_embed.shape[1] == 257 and clip_embed.shape[2] == 1024, (
             "Only image embedding from `openai/clip-vit-large-patch14` (224) supported."
