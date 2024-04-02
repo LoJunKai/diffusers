@@ -708,14 +708,13 @@ def make_train_dataset(args, tokenizer, accelerator):
         images = [image_transforms(image) for image in images]
 
         conditioning_sample = np.asarray(examples[conditioning_image_column][0])
-        # Only preprocess if provided conditioning_image_column is not image embeddings
-        if conditioning_sample.shape[1:] == torch.Size([1024, 16, 16]):
-            # No further preprocessing needed.
-            # TODO: Untested
-            conditioning_images = list(examples[conditioning_image_column])
-            raise RuntimeError("Untested code. Please check that it does what it is supposed to.")
 
-        elif conditioning_sample.shape[1:] == torch.Size([257, 1024]):
+        # Only preprocess if provided conditioning_image_column is not image embeddings
+        if conditioning_sample.shape == torch.Size([1024, 16, 16]):
+            # No further preprocessing needed.
+            conditioning_images = [torch.FloatTensor(cond_image) for cond_image in examples[conditioning_image_column]]
+
+        elif conditioning_sample.shape == torch.Size([1, 257, 1024]):
             # Need to reverse img_embed to restore spatiality
             conditioning_images = [CLIPWrapper.reverse_img_embed(torch.FloatTensor(img_embed))
                                    for img_embed in examples[conditioning_image_column]]
@@ -723,10 +722,10 @@ def make_train_dataset(args, tokenizer, accelerator):
             # Provided raw image
             # TODO: Untested
             # Inefficiency: This will initialize CLIP multiple times throughout training!
+            raise RuntimeError("Untested code. Please check that it does what it is supposed to.")
             preprocessor = CLIPWrapper(pretrained_model_name_or_path = "openai/clip-vit-large-patch14")
             conditioning_images = [preprocessor.preprocess_image(img)
                                    for img in examples[conditioning_image_column]]
-            raise RuntimeError("Untested code. Please check that it does what it is supposed to.")
         
         # conditioning_images = [image.convert("RGB") for image in examples[conditioning_image_column]]
         # conditioning_images = [conditioning_image_transforms(image) for image in conditioning_images]
