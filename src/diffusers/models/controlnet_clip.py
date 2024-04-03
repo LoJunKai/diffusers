@@ -129,16 +129,33 @@ class CLIPWrapper:
         ''' Run the CLIP image embedding pipeline. '''
         from transformers import AutoProcessor, CLIPVisionModel
 
+        self.device = torch.device("cpu")
         self.model = CLIPVisionModel.from_pretrained(
             pretrained_model_name_or_path)
         self.processor = AutoProcessor.from_pretrained(
             pretrained_model_name_or_path)
+        self.model.eval()
 
     def get_img_embed(self, image):
+        # To use GPU, remember to run enable_gpu() and free_gpu().
         inputs = self.processor(images=image, return_tensors="pt")
+        inputs.to(self.device)
+        
+        # if self.device.type == "cpu" and torch.cuda.is_available():
+            # raise AttributeError("GPU detected. Call enable_cpu and free_cpu to use GPU.")
+
         outputs = self.model(**inputs)
 
-        return outputs.last_hidden_state
+        return outputs.last_hidden_state.detach().cpu()
+    
+    def enable_gpu(self):
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.model.to(self.device)
+
+    def free_gpu(self):
+        self.device = torch.device("cpu")
+        self.model = self.model.cpu()
+        torch.cuda.empty_cache()
 
     @classmethod
     def reverse_img_embed(cls, clip_embed: torch.FloatTensor):
